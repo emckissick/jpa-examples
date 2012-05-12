@@ -1,0 +1,51 @@
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+repositories {
+	mavenCentral()
+}
+
+db = file("$buildDir/jpaTest.h2.db")
+
+sourceSets {
+	test {
+		java {  srcDir 'src/test/groovy'        	         }
+		resources {
+			srcDir 'src/resources/groovy'
+			srcDir 'src/test/resources'
+		}
+	}
+}
+
+dependencies {
+
+	groovy 'org.codehaus.groovy:groovy-all:1.8.6'
+
+		compile "commons-lang:commons-lang:2.5",
+			"org.hibernate:hibernate-core:3.6.7.Final",
+			"org.hibernate:hibernate-entitymanager:3.6.7.Final",
+			"org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final",
+			"org.springframework:spring-orm:$springVersion",
+			"log4j:log4j:1.2.8",
+			"org.slf4j:slf4j-simple:1.6.1",
+			"org.slf4j:jcl-over-slf4j:1.6.1",
+			'hsqldb:hsqldb:1.8.0.10'
+
+
+	testCompile "junit:junit:4.7",
+			"org.springframework:spring-test:$springVersion",
+			"org.aspectj:aspectjweaver:1.6.8",
+			"org.aspectj:aspectjrt:1.6.8",
+			"commons-dbcp:commons-dbcp:1.4"
+	runtime 'hsqldb:hsqldb:1.8.0.10'
+}
+
+task generateTestDb(dependsOn:classes, type:JavaExec) {
+	onlyIf { !db.exists() 
+		println "DB Exists";	
+	}
+	
+}
+
