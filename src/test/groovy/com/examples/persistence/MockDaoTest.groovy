@@ -1,32 +1,23 @@
 package com.examples.persistence;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.text.Format;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.text.Format
+import java.text.ParseException
+import java.text.SimpleDateFormat
 
 import javax.annotation.Resource
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.transaction.annotation.Transactional
 
-import com.examples.persistence.mock.MockCycle
+import com.examples.entity.MockCycle
 import com.examples.persistence.mock.MockDao
 import com.examples.test.configuration.TestConfig
 
@@ -51,10 +42,20 @@ class MockDaoTest {
 	
 		@Before
 		public void setup() throws ParseException{
+			
+			//Entity used to generate tables for test
+			MockCycle seedEntity = new MockCycle();
+			seedEntity.cycleId = -1234L;
+			seedEntity.beginDate = new Date();
+			seedEntity.endDate = new Date();
+			mockDao.save(seedEntity);
+			mockDao.em.flush();
+			
 			testEntity = new MockCycle();
-			testEntity.setCycleGid(999999l);
-			testEntity.setBeginDate(new Date());
-			testEntity.setEndDate(new Date());
+			testEntity.cycleId = 999999l;
+			testEntity.beginDate = new Date();
+			testEntity.endDate = new Date();
+			
 		}
 	
 	
@@ -66,33 +67,32 @@ class MockDaoTest {
 		}
 	
 		@Test
-		public void testSaveAndFind() {
+		public void testSaveAndFind() {	
 			mockDao.save(testEntity);
 			MockCycle storedEntity = mockDao.findByPrimaryKey(testEntity.getPrimaryKey());
-			assert storedEntity.getCycleGid() == testEntity.getCycleGid();
-			assert formatter.format(storedEntity.getBeginDate()) == formatter.format(testEntity.getBeginDate());
-			assert formatter.format(storedEntity.getEndDate()) == formatter.format(testEntity.getEndDate());
+			assert storedEntity.cycleId == testEntity.cycleId;
+			assert formatter.format(storedEntity.beginDate) == formatter.format(testEntity.beginDate);
+			assert formatter.format(storedEntity.endDate) == formatter.format(testEntity.endDate);
 		}
 	
 		@Test
-		public void testSaveOrUpdate() {
-	
+		public void testSaveOrUpdate() {			
 			MockCycle emptyEntity = mockDao.findByPrimaryKey(testEntity.getPrimaryKey());
 			assert (!emptyEntity);
 			//Test save portion of the method
 			MockCycle savedEntity = mockDao.saveOrUpdate(testEntity);
 			MockCycle originalEntity = mockDao.findByPrimaryKey(testEntity.getPrimaryKey());
-			assert savedEntity.getCycleGid() == originalEntity.getCycleGid();
-			assert formatter.format(savedEntity.getBeginDate()) == formatter.format(originalEntity.getBeginDate());
-			assert formatter.format(savedEntity.getEndDate()) == formatter.format(originalEntity.getEndDate());
+			assert savedEntity.cycleId == originalEntity.cycleId;
+			assert formatter.format(savedEntity.beginDate) == formatter.format(originalEntity.beginDate);
+			assert formatter.format(savedEntity.endDate) == formatter.format(originalEntity.endDate);
 	
 			//Test update portion of the method
 			MockCycle updatedEntity = mockDao.saveOrUpdate(testEntity);
 			MockCycle storedEntity = mockDao.findByPrimaryKey(testEntity.getPrimaryKey());
-			assert storedEntity.getCycleGid() == updatedEntity.getCycleGid();
-			assert testEntity.getCycleGid() == updatedEntity.getCycleGid();
-			assert formatter.format(storedEntity.getBeginDate()) == formatter.format(updatedEntity.getBeginDate());
-			assert formatter.format(storedEntity.getEndDate()) == formatter.format(updatedEntity.getEndDate());
+			assert storedEntity.cycleId == updatedEntity.cycleId;
+			assert testEntity.cycleId == updatedEntity.cycleId;
+			assert formatter.format(storedEntity.beginDate) == formatter.format(updatedEntity.beginDate);
+			assert formatter.format(storedEntity.endDate) == formatter.format(updatedEntity.endDate);
 	
 		}
 	
@@ -106,7 +106,7 @@ class MockDaoTest {
 	
 		@Test
 		public void testRemoveByPrimaryKey() {
-			Long id = testEntity.getCycleGid();
+			Long id = testEntity.cycleId;
 			mockDao.save(testEntity);
 			mockDao.removeByPrimaryKey(id);
 			assert (!mockDao.findByPrimaryKey(id));

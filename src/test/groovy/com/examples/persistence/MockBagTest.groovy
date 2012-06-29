@@ -16,6 +16,8 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.transaction.annotation.Transactional
 
+import com.examples.entity.MockBag
+import com.examples.entity.MockBean
 import com.examples.entity.MockCycle
 import com.examples.entity.MockEvent
 import com.examples.test.configuration.TestConfig
@@ -24,7 +26,7 @@ import com.examples.test.configuration.TestConfig
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=TestConfig.class)
 @Transactional("txManager")
-class MockEventDaoTest {
+class MockBagTest {
 
 	
 		@Autowired
@@ -34,15 +36,13 @@ class MockEventDaoTest {
 		EntityManager em;
 		
 	
-		public MockCycle testCycle = null;
-		public MockEvent testEvent = null;
-		public Format formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z");
-		private final Long eventId = 124L;
-	
-	
+		public MockBag jellyBellyBag = null;
+		public List<MockBean> beans = new ArrayList<MockBean>();
+		public MockBean redBean, greenBean, popCornBean;
+			
 		@Before
 		public void setup() throws ParseException{
-			testCycle = new MockCycle();
+			jellyBellyBag = new MockBag(name: "Jelly Belly");
 			testEvent = new MockEvent();
 			testCycle.cycleId = 999999L;
 			testCycle.beginDate = new Date();

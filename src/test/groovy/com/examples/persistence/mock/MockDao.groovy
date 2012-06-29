@@ -1,8 +1,9 @@
 package com.examples.persistence.mock
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
+import com.examples.entity.MockCycle
 import com.examples.persistence.AbstractJpaGenericDao
 
 
