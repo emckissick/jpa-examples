@@ -34,8 +34,8 @@ class MockEventDaoTest {
 		EntityManager em;
 		
 	
-		public MockCycle testCycle = null;
-		public MockEvent testEvent = null;
+		public MockCycle testCycle, secondCycle = null;
+		public MockEvent testEvent, backupEvent = null;
 		public Format formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z");
 		private final Long eventId = 124L;
 	
@@ -51,6 +51,14 @@ class MockEventDaoTest {
 			testEvent.eventId = 124l;
 			testEvent.name = "Test Event";
 			testEvent.cycle =testCycle;
+			
+			//Let's be Groovy
+			secondCycle = new MockCycle(cycleId: 999990L,
+												  beginDate: new Date(),
+												  endDate: new Date());
+			backupEvent = new MockEvent(eventId: 125L, 
+												 name: "Backup Event",
+												 cycle: secondCycle);	
 			
 		}
 	
@@ -122,5 +130,4 @@ class MockEventDaoTest {
 		updatedCycle = em.find(MockCycle, testCycle.cycleId);
 		assert !updatedCycle
 	}
-
 }

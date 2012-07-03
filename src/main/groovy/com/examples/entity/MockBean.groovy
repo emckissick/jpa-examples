@@ -1,16 +1,15 @@
 package com.examples.entity;
 
-import groovy.transform.Canonical
-
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
+import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.Table
-@Canonical
+
 @Entity
 @Table(name="MOCK_BEAN")
 class MockBean{
@@ -27,6 +26,11 @@ class MockBean{
 	@Enumerated(EnumType.STRING)
 	String color;
 	@ManyToOne
-	@Column(name="BAG_ID")
-	Long bagId;
+	@JoinColumn(name="BAG_ID")
+	MockBag bag;
+	
+	@Override
+	String toString() {
+		println "beanId = $beanId color: $color"
+	}
 }

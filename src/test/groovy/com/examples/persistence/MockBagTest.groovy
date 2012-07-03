@@ -1,11 +1,10 @@
 package com.examples.persistence;
 
-import java.text.Format
 import java.text.ParseException
-import java.text.SimpleDateFormat
 
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
+import javax.persistence.Query
 
 import org.junit.Before
 import org.junit.Test
@@ -18,11 +17,14 @@ import org.springframework.transaction.annotation.Transactional
 
 import com.examples.entity.MockBag
 import com.examples.entity.MockBean
-import com.examples.entity.MockCycle
-import com.examples.entity.MockEvent
+import com.examples.entity.MockBean.Color
 import com.examples.test.configuration.TestConfig
 
-
+/**
+ * A Bi-Directional Test with development Landmines
+ * @author eugenemckissick
+ *
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=TestConfig.class)
 @Transactional("txManager")
@@ -43,84 +45,28 @@ class MockBagTest {
 		@Before
 		public void setup() throws ParseException{
 			jellyBellyBag = new MockBag(name: "Jelly Belly");
-			testEvent = new MockEvent();
-			testCycle.cycleId = 999999L;
-			testCycle.beginDate = new Date();
-			testCycle.endDate = new Date();
+			em.persist(jellyBellyBag);
+			em.flush();
+			redBean = new MockBean(color: Color.RED, bag:jellyBellyBag );
 			
-			testEvent.eventId = 124l;
-			testEvent.name = "Test Event";
-			testEvent.cycle =testCycle;
 			
+			greenBean = new MockBean(color: Color.GREEN, bag:jellyBellyBag );
+			popCornBean = new MockBean(color: Color.MUDDY, bag: jellyBellyBag );
+		
+			em.persist(redBean);			
+			em.persist(greenBean);
+			em.persist(popCornBean);				
 		}
 	
 	
 	
 	@Test
-	public void testOneToOneWithCascadingSave()
-	{
-		em.persist(testEvent);
-		MockEvent result = em.find(MockEvent, eventId);
-		println result;
-		assert result == testEvent;
-		assert result.cycle == testCycle;
+	public void testRetrieveBagWithBeans()
+	{	
+		em.refresh(jellyBellyBag);
+		MockBag result = em.find(MockBag, jellyBellyBag.bagId);	
+		println result;	
+		result.beans.each { it -> println it.color };					
 	}
 	
-	@Test
-	public void testOneToOneWithCascadingUpdate()
-	{
-		em.persist(testEvent);
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(testEvent.cycle.endDate);
-		cal.add(Calendar.DATE, 25);
-		Date bumpedDate = cal.getTime();
-		testEvent.cycle.endDate = bumpedDate
-		
-		MockEvent mergedEvent = em.merge(testEvent);
-		MockEvent result = em.find(MockEvent, eventId);
-		println result;
-		assert mergedEvent == result;
-		assert mergedEvent == testEvent;
-		
-		MockCycle updatedCycle = em.find(MockCycle, testCycle.cycleId);
-		assert updatedCycle.endDate == bumpedDate;
-	}
-	
-	@Test
-	public void testOneToOneRemoveCycleIdFromEvent()
-	{
-		em.persist(testEvent);
-		
-		testEvent.cycle = null;
-		
-		MockEvent mergedEvent = em.merge(testEvent);
-		MockEvent result = em.find(MockEvent, eventId);
-		println result;
-		assert mergedEvent == result;
-		assert mergedEvent == testEvent;
-		
-		MockCycle updatedCycle = em.find(MockCycle, testCycle.cycleId);
-		assert updatedCycle
-	}
-	
-	@Test
-	public void testOneToOneScorchEarth()
-	{
-		em.persist(testEvent);
-		
-		MockEvent result = em.find(MockEvent, eventId);
-		println result;
-		assert testEvent == result;
-		MockCycle updatedCycle = em.find(MockCycle, testCycle.cycleId);
-		assert updatedCycle
-		
-		em.remove(testEvent);
-		result = em.find(MockEvent, eventId);		
-		assert !result;
-		
-		updatedCycle = em.find(MockCycle, testCycle.cycleId);
-		assert !updatedCycle
-	}
-
 }

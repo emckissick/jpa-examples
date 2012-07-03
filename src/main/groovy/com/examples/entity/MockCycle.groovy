@@ -28,6 +28,8 @@ class MockCycle implements GenericEntityInterface{
 	Date endDate;	
 	@Column(name="DATE_CREATED")
 	Date dateCreated;
+	@Column(name="COMMENTS")
+	String comments;
 		
 
 	
