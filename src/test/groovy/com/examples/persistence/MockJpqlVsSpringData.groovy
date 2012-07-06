@@ -84,7 +84,7 @@ class MockJpqlVsSpringData {
 	}
 	
 	@Test
-	public void testSpringBatch() 
+	public void testSpringData() 
 	{
 		//Finish this
 	}
