@@ -25,7 +25,7 @@ import com.examples.test.configuration.TestConfig
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=TestConfig.class)
 @Transactional("txManager")
-class MockJpqlVsSpringData {
+class MockJpqlExamples {
 
 	
 		@Autowired
